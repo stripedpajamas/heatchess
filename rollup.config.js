@@ -13,7 +13,8 @@ export default {
   plugins: [
     replace({
       values: {
-        'process.env.LICHESS_API_TOKEN': JSON.stringify(process.env.LICHESS_API_TOKEN)
+        'process.env.LICHESS_API_TOKEN': JSON.stringify(process.env.LICHESS_API_TOKEN),
+        'process.env.LICHESS_USERNAME': JSON.stringify(process.env.LICHESS_USERNAME)
       },
       preventAssignment: true
     }),

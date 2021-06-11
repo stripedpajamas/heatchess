@@ -1,6 +1,18 @@
 import * as lichess from './lichess'
 import { Chess } from 'chess.js'
 
+const swapColor = (c) => c === 'b' ? 'w' : 'b'
+
+async function updateBoardHeatmap (boardState, myColor) {
+  const oppMoves = boardState.moves({ for: swapColor(myColor) })
+  const myMoves = boardState.moves({ for: myColor })
+
+  console.log({
+    oppMoves,
+    myMoves
+  })
+}
+
 async function main () {
   console.log('Heatchess initializing...')
 
@@ -21,12 +33,19 @@ async function main () {
       throw new Error('Expected first message to contain game state')
     }
 
-    const { initialFen, state } = chunk.value
+    const { initialFen, state, black } = chunk.value
+
+    // TODO make this configurable
+    const myColor = black.id === process.env.LICHESS_USERNAME ? 'b' : 'w'
+    console.log(`You are playing the ${myColor === 'b' ? 'black' : 'white'} pieces`)
 
     const boardState = new Chess(initialFen === 'startpos' ? undefined : initialFen)
 
     // apply whatever moves are in the initial chunk
-    state.moves.split(' ').filter(Boolean).forEach((move) => boardState.move(move, { sloppy: true }))
+    state.moves.split(' ').filter(Boolean).forEach((move) => {
+      boardState.move(move, { sloppy: true })
+      updateBoardHeatmap(boardState, myColor)
+    })
 
     console.log(boardState.ascii())
     while (true) {
@@ -37,6 +56,7 @@ async function main () {
       const lastMove = chunk.value.moves.split(' ').pop()
       boardState.move(lastMove, { sloppy: true })
 
+      updateBoardHeatmap(boardState, myColor)
       console.log(boardState.ascii())
     }
   } catch (e) {
