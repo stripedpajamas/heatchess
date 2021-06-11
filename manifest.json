@@ -1,0 +1,13 @@
+{
+  "manifest_version": 2,
+  "name": "Heatchess",
+  "version": "1.0",
+  "description": "Heats up the chess board",
+
+  "content_scripts": [
+    {
+      "matches": ["*://*.lichess.org/*"],
+      "js": ["bundle.js"]
+    }
+  ]
+}
