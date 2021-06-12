@@ -4,13 +4,12 @@ import { Chess } from 'chess.js'
 const swapColor = (c) => c === 'b' ? 'w' : 'b'
 
 async function updateBoardHeatmap (boardState, myColor) {
-  const oppMoves = boardState.moves({ for: swapColor(myColor) })
-  const myMoves = boardState.moves({ for: myColor })
-
-  console.log({
-    oppMoves,
-    myMoves
-  })
+  // TODO
+  //  - create map of all the squares their pieces can attack,
+  //    incrementing a counter for each piece that can attack the square
+  //  - do the same for my pieces but decrement the counter
+  //  - use the resulting map to modify squares on the DOM (apply some CSS
+  //    that can get more severe by degrees, like darker reds or something)
 }
 
 async function main () {
