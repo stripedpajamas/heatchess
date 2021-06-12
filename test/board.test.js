@@ -78,3 +78,32 @@ test('squaresPieceCanAccess | rook', () => {
     expect(actual).toEqual(expected)
   }
 })
+
+test('squaresPieceCanAccess | bishop', () => {
+  const expectations = [
+    [
+      'd3',
+      [],
+      ['a6', 'b1', 'b5', 'c2', 'c4', 'e2', 'e4', 'f1', 'f5', 'g6', 'h7']
+    ],
+    [
+      'd3',
+      ['c4'],
+      ['b1', 'c2', 'c4', 'e2', 'e4', 'f1', 'f5', 'g6', 'h7']
+    ],
+    [
+      'd3',
+      ['c4', 'f3', 'f5'],
+      ['b1', 'c2', 'c4', 'e2', 'e4', 'f1', 'f5']
+    ]
+  ]
+  for (const [bishopLoc, otherPieceLocations, expected] of expectations) {
+    const boardState = new Chess('') // completely blank board
+    otherPieceLocations.forEach((loc) => boardState.put({ type: 'q', color: 'w' }, loc))
+
+    const actual = board.squaresPieceCanAccess('b', bishopLoc, boardState)
+    actual.sort()
+
+    expect(actual).toEqual(expected)
+  }
+})

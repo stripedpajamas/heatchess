@@ -51,7 +51,35 @@ export function squaresPieceCanAccess (pieceType, pieceLocation, boardState) {
       break
     }
     case 'b': {
-      break
+      const squares = []
+
+      // up and leftward movement
+      for (let r = currentRow - 1, c = currentCol - 1; r >= 0 && c >= 0; r--, c--) {
+        const candidateSquare = BOARD[r][c]
+        squares.push(candidateSquare) // we can at least reach this square
+        // but if there's something on this square, we can't go further
+        if (boardState.get(candidateSquare)) break
+      }
+      // up and rightward movement
+      for (let r = currentRow - 1, c = currentCol + 1; r >= 0 && c < 8; r--, c++) {
+        const candidateSquare = BOARD[r][c]
+        squares.push(candidateSquare)
+        if (boardState.get(candidateSquare)) break
+      }
+      // down and leftward movement
+      for (let r = currentRow + 1, c = currentCol - 1; r < 8 && c >= 0; r++, c--) {
+        const candidateSquare = BOARD[r][c]
+        squares.push(candidateSquare)
+        if (boardState.get(candidateSquare)) break
+      }
+      // down and rightward movement
+      for (let r = currentRow + 1, c = currentCol + 1; r < 8 && c < 8; r++, c++) {
+        const candidateSquare = BOARD[r][c]
+        squares.push(candidateSquare)
+        if (boardState.get(candidateSquare)) break
+      }
+
+      return squares
     }
     case 'n': {
       // knights can't be blocked
