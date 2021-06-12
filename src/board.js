@@ -48,7 +48,8 @@ export function squaresPieceCanAccess (pieceType, pieceLocation, boardState) {
         .map(([r, c]) => BOARD[r][c])
     }
     case 'q': {
-      break
+      return squaresPieceCanAccess('b', pieceLocation, boardState)
+        .concat(squaresPieceCanAccess('r', pieceLocation, boardState))
     }
     case 'b': {
       const squares = []

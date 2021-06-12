@@ -107,3 +107,32 @@ test('squaresPieceCanAccess | bishop', () => {
     expect(actual).toEqual(expected)
   }
 })
+
+test('squaresPieceCanAccess | queen', () => {
+  const expectations = [
+    [
+      'd3',
+      [],
+      ['a3', 'a6', 'b1', 'b3', 'b5', 'c2', 'c3', 'c4', 'd1', 'd2', 'd4', 'd5', 'd6', 'd7', 'd8', 'e2', 'e3', 'e4', 'f1', 'f3', 'f5', 'g3', 'g6', 'h3', 'h7']
+    ],
+    [
+      'd3',
+      ['d4'],
+      ['a3', 'a6', 'b1', 'b3', 'b5', 'c2', 'c3', 'c4', 'd1', 'd2', 'd4', 'e2', 'e3', 'e4', 'f1', 'f3', 'f5', 'g3', 'g6', 'h3', 'h7']
+    ],
+    [
+      'd3',
+      ['d4', 'e4', 'f2'],
+      ['a3', 'a6', 'b1', 'b3', 'b5', 'c2', 'c3', 'c4', 'd1', 'd2', 'd4', 'e2', 'e3', 'e4', 'f1', 'f3', 'g3', 'h3']
+    ]
+  ]
+  for (const [queenLoc, otherPieceLocations, expected] of expectations) {
+    const boardState = new Chess('') // completely blank board
+    otherPieceLocations.forEach((loc) => boardState.put({ type: 'r', color: 'w' }, loc))
+
+    const actual = board.squaresPieceCanAccess('q', queenLoc, boardState)
+    actual.sort()
+
+    expect(actual).toEqual(expected)
+  }
+})
