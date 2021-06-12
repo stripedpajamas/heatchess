@@ -7,7 +7,7 @@ const BOARD = [
   ['a5', 'b5', 'c5', 'd5', 'e5', 'f5', 'g5', 'h5'],
   ['a6', 'b6', 'c6', 'd6', 'e6', 'f6', 'g6', 'h6'],
   ['a7', 'b7', 'c7', 'd7', 'e7', 'f7', 'g7', 'h7'],
-  ['a8', 'b8', 'c8', 'd8', 'e8', 'f8', 'g8', 'h8'],
+  ['a8', 'b8', 'c8', 'd8', 'e8', 'f8', 'g8', 'h8']
 ]
 
 // returns row/col to the BOARD above given something like 'e4'
@@ -24,12 +24,41 @@ function locationToIdx (loc) {
 }
 
 // this function is talking about the squares the piece "attacks" or "defends"
-// not the piece's legal moves
-function squaresPieceCanAccess (pieceType, pieceLocation, boardState) {
+// not the piece's legal moves; it does have to take into account
+// that pieces may be blocking the path of the piece in question
+export function squaresPieceCanAccess (pieceType, pieceLocation, boardState) {
   const [currentRow, currentCol] = locationToIdx(pieceLocation)
   switch (pieceType.toLowerCase()) {
     case 'k': {
-      break
+      // the king's path can't be blocked since it's only one square in each
+      // direction
+      const squares = []
+      if (currentRow > 0) {
+        squares.push(BOARD[currentRow - 1][currentCol]) // up
+        if (currentCol > 0) {
+          squares.push(BOARD[currentRow - 1][currentCol - 1]) // up left
+        }
+        if (currentCol < 7) {
+          squares.push(BOARD[currentRow - 1][currentCol + 1]) // up right
+        }
+      }
+      if (currentCol > 0) {
+        squares.push(BOARD[currentRow][currentCol - 1]) // left
+      }
+      if (currentCol < 7) {
+        squares.push(BOARD[currentRow][currentCol + 1]) // right
+      }
+      if (currentRow < 7) {
+        squares.push(BOARD[currentRow + 1][currentCol]) // down
+        if (currentCol > 0) {
+          squares.push(BOARD[currentRow + 1][currentCol - 1]) // down left
+        }
+        if (currentCol < 7) {
+          squares.push(BOARD[currentRow + 1][currentCol + 1]) // down right
+        }
+      }
+
+      return squares
     }
     case 'q': {
       break
@@ -50,5 +79,4 @@ function squaresPieceCanAccess (pieceType, pieceLocation, boardState) {
       throw new Error('unrecognized piece type')
     }
   }
-
 }

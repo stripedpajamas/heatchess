@@ -1,8 +1,8 @@
-require('dotenv').config()
-
 import { nodeResolve } from '@rollup/plugin-node-resolve'
 import replace from '@rollup/plugin-replace'
 import commonjs from '@rollup/plugin-commonjs'
+
+require('dotenv').config()
 
 export default {
   input: 'src/index.js',
