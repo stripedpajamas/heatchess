@@ -71,7 +71,35 @@ export function squaresPieceCanAccess (pieceType, pieceLocation, boardState) {
         .map(([r, c]) => BOARD[r][c])
     }
     case 'r': {
-      break
+      const squares = []
+
+      // leftward horizontal movement
+      for (let c = currentCol - 1; c >= 0; c--) {
+        const candidateSquare = BOARD[currentRow][c]
+        squares.push(candidateSquare) // we can at least reach this square
+        // but if there's something on this square, we can't go further
+        if (boardState.get(candidateSquare)) break
+      }
+      // rightward horizontal movement
+      for (let c = currentCol + 1; c < 8; c++) {
+        const candidateSquare = BOARD[currentRow][c]
+        squares.push(candidateSquare)
+        if (boardState.get(candidateSquare)) break
+      }
+      // upward movement
+      for (let r = currentRow + 1; r < 8; r++) {
+        const candidateSquare = BOARD[r][currentCol]
+        squares.push(candidateSquare)
+        if (boardState.get(candidateSquare)) break
+      }
+      // downward movement
+      for (let r = currentRow - 1; r >= 0; r--) {
+        const candidateSquare = BOARD[r][currentCol]
+        squares.push(candidateSquare)
+        if (boardState.get(candidateSquare)) break
+      }
+
+      return squares
     }
     case 'p': {
       // pawns cover their two upper diagonals, and that attack can't be blocked

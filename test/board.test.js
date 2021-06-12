@@ -1,4 +1,5 @@
 /* global test, expect */
+import { Chess } from 'chess.js'
 import * as board from '../src/board'
 
 test('squaresPieceCanAccess | king', () => {
@@ -24,7 +25,6 @@ test('squaresPieceCanAccess | knight', () => {
   ]
   for (const [knightLoc, expected] of expectations) {
     const actual = board.squaresPieceCanAccess('n', knightLoc)
-    // don't care about actual order, so sorting before asserting
     actual.sort()
 
     expect(actual).toEqual(expected)
@@ -39,7 +39,40 @@ test('squaresPieceCanAccess | pawn', () => {
   ]
   for (const [pawnLoc, expected] of expectations) {
     const actual = board.squaresPieceCanAccess('p', pawnLoc)
-    // don't care about actual order, so sorting before asserting
+    actual.sort()
+
+    expect(actual).toEqual(expected)
+  }
+})
+
+test('squaresPieceCanAccess | rook', () => {
+  const expectations = [
+    [
+      'd4',
+      [],
+      ['a4', 'b4', 'c4', 'd1', 'd2', 'd3', 'd5', 'd6', 'd7', 'd8', 'e4', 'f4', 'g4', 'h4']
+    ],
+    [
+      'd4',
+      ['b4'],
+      ['b4', 'c4', 'd1', 'd2', 'd3', 'd5', 'd6', 'd7', 'd8', 'e4', 'f4', 'g4', 'h4']
+    ],
+    [
+      'd4',
+      ['b4', 'e4', 'e6'],
+      ['b4', 'c4', 'd1', 'd2', 'd3', 'd5', 'd6', 'd7', 'd8', 'e4']
+    ],
+    [
+      'h1',
+      ['g1', 'h2'],
+      ['g1', 'h2']
+    ]
+  ]
+  for (const [rookLoc, otherPieceLocations, expected] of expectations) {
+    const boardState = new Chess('') // completely blank board
+    otherPieceLocations.forEach((loc) => boardState.put({ type: 'q', color: 'w' }, loc))
+
+    const actual = board.squaresPieceCanAccess('r', rookLoc, boardState)
     actual.sort()
 
     expect(actual).toEqual(expected)
