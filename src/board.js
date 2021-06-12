@@ -23,10 +23,26 @@ function locationToIdx (loc) {
   return [row, col]
 }
 
+export function getAllPieceLocations (boardState) {
+  const b = []
+  const w = []
+  const output = { b, w }
+  for (const row of BOARD) {
+    for (const loc of row) {
+      const piece = boardState.get(loc)
+      if (piece) {
+        output[piece.color].push({ location: loc, ...piece })
+      }
+    }
+  }
+
+  return output
+}
+
 // this function is talking about the squares the piece "attacks" or "defends"
 // not the piece's legal moves; it does have to take into account
 // that pieces may be blocking the path of the piece in question
-export function squaresPieceCanAccess (pieceType, pieceLocation, boardState) {
+export function squaresPieceCanAccess (pieceType, pieceLocation, pieceColor, boardState) {
   const [currentRow, currentCol] = locationToIdx(pieceLocation)
   switch (pieceType.toLowerCase()) {
     case 'k': {
@@ -48,8 +64,8 @@ export function squaresPieceCanAccess (pieceType, pieceLocation, boardState) {
         .map(([r, c]) => BOARD[r][c])
     }
     case 'q': {
-      return squaresPieceCanAccess('b', pieceLocation, boardState)
-        .concat(squaresPieceCanAccess('r', pieceLocation, boardState))
+      return squaresPieceCanAccess('b', pieceLocation, pieceColor, boardState)
+        .concat(squaresPieceCanAccess('r', pieceLocation, pieceColor, boardState))
     }
     case 'b': {
       const squares = []
@@ -133,10 +149,16 @@ export function squaresPieceCanAccess (pieceType, pieceLocation, boardState) {
     case 'p': {
       // pawns cover their two upper diagonals, and that attack can't be blocked
       // we assume we'll never be asked about an invalidly placed pawn, like on the 8th rank
-      const squares = [
-        [currentRow + 1, currentCol - 1],
-        [currentRow + 1, currentCol + 1]
-      ]
+      // also the direction is flipped depending on the color
+      const squares = pieceColor === 'w'
+        ? [
+            [currentRow + 1, currentCol - 1],
+            [currentRow + 1, currentCol + 1]
+          ]
+        : [
+            [currentRow - 1, currentCol - 1],
+            [currentRow - 1, currentCol + 1]
+          ]
 
       return squares
         .filter(([r, c]) => r < 8 && r >= 0 && c < 8 && c >= 0)

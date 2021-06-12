@@ -1,13 +1,33 @@
 import * as lichess from './lichess'
+import { getAllPieceLocations, squaresPieceCanAccess } from './board'
 import { Chess } from 'chess.js'
 
 const swapColor = (c) => c === 'b' ? 'w' : 'b'
 
 async function updateBoardHeatmap (boardState, myColor) {
+  const heatmap = new Map()
+  const pieces = getAllPieceLocations(boardState)
+
+  const theirPieces = pieces[swapColor(myColor)]
+  const myPieces = pieces[myColor]
+
+  for (const piece of theirPieces) {
+    const squares = squaresPieceCanAccess(piece.type, piece.location, piece.color, boardState)
+    for (const square of squares) {
+      heatmap.set(square, (heatmap.get(square) || 0) + 1)
+    }
+  }
+
+  for (const piece of myPieces) {
+    const squares = squaresPieceCanAccess(piece.type, piece.location, piece.color, boardState)
+    for (const square of squares) {
+      heatmap.set(square, (heatmap.get(square) || 0) - 1)
+    }
+  }
+
+  console.log([...heatmap.entries()])
+
   // TODO
-  //  - create map of all the squares their pieces can attack,
-  //    incrementing a counter for each piece that can attack the square
-  //  - do the same for my pieces but decrement the counter
   //  - use the resulting map to modify squares on the DOM (apply some CSS
   //    that can get more severe by degrees, like darker reds or something)
 }
