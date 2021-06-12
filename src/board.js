@@ -32,33 +32,20 @@ export function squaresPieceCanAccess (pieceType, pieceLocation, boardState) {
     case 'k': {
       // the king's path can't be blocked since it's only one square in each
       // direction
-      const squares = []
-      if (currentRow > 0) {
-        squares.push(BOARD[currentRow - 1][currentCol]) // up
-        if (currentCol > 0) {
-          squares.push(BOARD[currentRow - 1][currentCol - 1]) // up left
-        }
-        if (currentCol < 7) {
-          squares.push(BOARD[currentRow - 1][currentCol + 1]) // up right
-        }
-      }
-      if (currentCol > 0) {
-        squares.push(BOARD[currentRow][currentCol - 1]) // left
-      }
-      if (currentCol < 7) {
-        squares.push(BOARD[currentRow][currentCol + 1]) // right
-      }
-      if (currentRow < 7) {
-        squares.push(BOARD[currentRow + 1][currentCol]) // down
-        if (currentCol > 0) {
-          squares.push(BOARD[currentRow + 1][currentCol - 1]) // down left
-        }
-        if (currentCol < 7) {
-          squares.push(BOARD[currentRow + 1][currentCol + 1]) // down right
-        }
-      }
+      const squares = [
+        [currentRow - 1, currentCol],
+        [currentRow - 1, currentCol - 1],
+        [currentRow - 1, currentCol + 1],
+        [currentRow, currentCol - 1],
+        [currentRow, currentCol + 1],
+        [currentRow + 1, currentCol],
+        [currentRow + 1, currentCol - 1],
+        [currentRow + 1, currentCol + 1]
+      ]
 
       return squares
+        .filter(([r, c]) => r < 8 && r >= 0 && c < 8 && c >= 0)
+        .map(([r, c]) => BOARD[r][c])
     }
     case 'q': {
       break
