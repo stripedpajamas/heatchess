@@ -74,7 +74,16 @@ export function squaresPieceCanAccess (pieceType, pieceLocation, boardState) {
       break
     }
     case 'p': {
-      break
+      // pawns cover their two upper diagonals, and that attack can't be blocked
+      // we assume we'll never be asked about an invalidly placed pawn, like on the 8th rank
+      const squares = [
+        [currentRow + 1, currentCol - 1],
+        [currentRow + 1, currentCol + 1]
+      ]
+
+      return squares
+        .filter(([r, c]) => r < 8 && r >= 0 && c < 8 && c >= 0)
+        .map(([r, c]) => BOARD[r][c])
     }
     default: {
       throw new Error('unrecognized piece type')
