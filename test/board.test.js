@@ -15,3 +15,18 @@ test('squaresPieceCanAccess | king', () => {
     expect(actual).toEqual(expected)
   }
 })
+
+test('squaresPieceCanAccess | knight', () => {
+  const expectations = [
+    ['a1', ['b3', 'c2']],
+    ['e4', ['c3', 'c5', 'd2', 'd6', 'f2', 'f6', 'g3', 'g5']],
+    ['g7', ['e6', 'e8', 'f5', 'h5']]
+  ]
+  for (const [knightLoc, expected] of expectations) {
+    const actual = board.squaresPieceCanAccess('n', knightLoc)
+    // don't care about actual order, so sorting before asserting
+    actual.sort()
+
+    expect(actual).toEqual(expected)
+  }
+})

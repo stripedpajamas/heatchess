@@ -54,7 +54,21 @@ export function squaresPieceCanAccess (pieceType, pieceLocation, boardState) {
       break
     }
     case 'n': {
-      break
+      // knights can't be blocked
+      const squares = [
+        [currentRow + 1, currentCol - 2],
+        [currentRow + 2, currentCol - 1],
+        [currentRow + 2, currentCol + 1],
+        [currentRow + 1, currentCol + 2],
+        [currentRow - 1, currentCol - 2],
+        [currentRow - 2, currentCol - 1],
+        [currentRow - 2, currentCol + 1],
+        [currentRow - 1, currentCol + 2]
+      ]
+
+      return squares
+        .filter(([r, c]) => r < 8 && r >= 0 && c < 8 && c >= 0)
+        .map(([r, c]) => BOARD[r][c])
     }
     case 'r': {
       break
