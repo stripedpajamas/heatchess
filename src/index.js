@@ -1,8 +1,36 @@
 import * as lichess from './lichess'
-import { getAllPieceLocations, squaresPieceCanAccess } from './board'
+import { boardSquares, getAllPieceLocations, squaresPieceCanAccess } from './board'
 import { Chess } from 'chess.js'
 
 const swapColor = (c) => c === 'b' ? 'w' : 'b'
+
+function uncolorSquare (squareLoc) {
+  const el = lichess.getPieceElementByLocation(squareLoc)
+
+  // currently this only works with pieces; need to figure out how to color squares
+  if (el) {
+    el.style.boxShadow = ''
+  }
+}
+
+function colorSquare (squareLoc, severity) {
+  const el = lichess.getPieceElementByLocation(squareLoc)
+
+  // currently this only works with pieces; need to figure out how to color squares
+  if (el) {
+    let borders = Math.abs(severity * 5)
+    let color = severity > 0
+      ? 'rgba(255, 0, 0, 0.5'
+      : 'rgba(0, 255, 0, 0.5'
+
+    if (severity === 0) {
+      borders = '5'
+      color = 'rgba(255, 255, 0, 0.5)'
+    }
+    const boxShadow = `inset 0 0 0 ${borders}px ${color}`
+    el.style.boxShadow = boxShadow
+  }
+}
 
 async function updateBoardHeatmap (boardState, myColor) {
   const heatmap = new Map()
@@ -25,11 +53,15 @@ async function updateBoardHeatmap (boardState, myColor) {
     }
   }
 
-  console.log([...heatmap.entries()])
+  for (const [square, heat] of heatmap.entries()) {
+    colorSquare(square, heat)
+  }
 
-  // TODO
-  //  - use the resulting map to modify squares on the DOM (apply some CSS
-  //    that can get more severe by degrees, like darker reds or something)
+  // there are squares that no piece can access; we will want to reset
+  // the dom manipulations on pieces that move into those safe squares
+  for (const square of boardSquares()) {
+    if (!heatmap.has(square)) uncolorSquare(square)
+  }
 }
 
 async function main () {

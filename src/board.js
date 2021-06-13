@@ -10,6 +10,14 @@ const BOARD = [
   ['a8', 'b8', 'c8', 'd8', 'e8', 'f8', 'g8', 'h8']
 ]
 
+export function * boardSquares () {
+  for (const row of BOARD) {
+    for (const square of row) {
+      yield square
+    }
+  }
+}
+
 // returns row/col to the BOARD above given something like 'e4'
 function locationToIdx (loc) {
   const [ltr, num] = loc.toLowerCase().split('')
