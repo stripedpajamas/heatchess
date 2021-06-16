@@ -13,23 +13,30 @@ function uncolorSquare (squareLoc) {
   }
 }
 
-function colorSquare (squareLoc, severity) {
-  const el = lichess.getPieceElementByLocation(squareLoc)
+function colorSquare (squareLoc, severity, myColor) {
+  let square = document.getElementById(`heatchess-${squareLoc}`)
+  if (!square) {
+    square = document.createElement('square')
+    square.id = `heatchess-${squareLoc}`
 
-  // currently this only works with pieces; need to figure out how to color squares
-  if (el) {
-    let borders = Math.abs(severity * 5)
-    let color = severity > 0
-      ? 'rgba(255, 0, 0, 0.5'
-      : 'rgba(0, 255, 0, 0.5'
-
-    if (severity === 0) {
-      borders = '5'
-      color = 'rgba(255, 255, 0, 0.5)'
-    }
-    const boxShadow = `inset 0 0 0 ${borders}px ${color}`
-    el.style.boxShadow = boxShadow
+    const container = document.getElementsByClassName('main-board')[0]
+    container.appendChild(square)
   }
+
+  const transform = lichess.getTransformForLocation(squareLoc, myColor)
+  square.style.transform = transform
+
+  let borders = Math.abs(severity * 5)
+  let color = severity > 0
+    ? 'rgba(255, 0, 0, 0.5'
+    : 'rgba(0, 255, 0, 0.5'
+
+  if (severity === 0) {
+    borders = '5'
+    color = 'rgba(255, 255, 0, 0.5)'
+  }
+  const boxShadow = `inset 0 0 0 ${borders}px ${color}`
+  square.style.boxShadow = boxShadow
 }
 
 async function updateBoardHeatmap (boardState, myColor) {
@@ -54,7 +61,7 @@ async function updateBoardHeatmap (boardState, myColor) {
   }
 
   for (const [square, heat] of heatmap.entries()) {
-    colorSquare(square, heat)
+    colorSquare(square, heat, myColor)
   }
 
   // there are squares that no piece can access; we will want to reset
@@ -84,12 +91,15 @@ async function main () {
       throw new Error('Expected first message to contain game state')
     }
 
-    const { initialFen, state, black } = chunk.value
+    let { initialFen, state, black, variant } = chunk.value
 
     // TODO make this configurable
     const myColor = black.id === process.env.LICHESS_USERNAME ? 'b' : 'w'
     console.log(`You are playing the ${myColor === 'b' ? 'black' : 'white'} pieces`)
 
+    if (variant.key === 'horde') {
+      initialFen = 'rnbqkbnr/pppppppp/8/1PP2PP1/PPPPPPPP/PPPPPPPP/PPPPPPPP/PPPPPPPP w kq - 0 1'
+    }
     const boardState = new Chess(initialFen === 'startpos' ? undefined : initialFen)
 
     // apply whatever moves are in the initial chunk
@@ -98,6 +108,7 @@ async function main () {
       updateBoardHeatmap(boardState, myColor)
     })
 
+    updateBoardHeatmap(boardState, myColor)
     console.log(boardState.ascii())
     while (true) {
       chunk = await stream.read()
